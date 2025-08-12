@@ -1,0 +1,10 @@
+# Ignore all .env files anywhere
+*.env
+
+# Ignore backup env files
+.env.backup
+
+# Ignore the new_folder directory completely
+frontend/
+**/venv/
+venv/

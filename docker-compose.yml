@@ -1,0 +1,142 @@
+version: '3.9'
+
+services:
+  account_service:
+    build:
+      context: ./account_service/account_service
+    container_name: account_service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./account_service/account_service:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - ./account_service/account_service/.env      
+    environment:
+      - DB_NAME=jobjourney_db
+      - DB_USER=postgres
+      - DB_PASSWORD=1729
+      - DB_HOST=db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    networks:
+      - app-network   
+
+
+  job_list_service:
+    build:
+      context: ./job_list_service
+      dockerfile: Dockerfile
+    container_name: job_list_service
+    command: python manage.py runserver 0.0.0.0:8001
+    volumes:
+      - ./job_list_service:/code
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+    env_file:
+      - ./job_list_service/.env
+    environment:
+      - POSTGRES_DB=jobjourney_joblist_db  
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1729
+      - DB_HOST=db
+    networks:
+      - app-network 
+
+  message_service:
+    build:
+      context: ./message_service
+      dockerfile: Dockerfile
+    container_name: message_service
+    # command: python manage.py runserver 0.0.0.0:8003
+    command: daphne -b 0.0.0.0 -p 8003 message_service.asgi:application
+    # command: tail -f /dev/null
+
+    volumes:
+      - ./message_service:/code
+    environment:
+      - DJANGO_SETTINGS_MODULE=message_service.settings  
+    ports:
+      - "8003:8003"
+    depends_on:
+      - db
+    env_file:
+      - ./message_service/.env  
+    networks:
+      - app-network
+
+
+
+
+  api_gateway:
+    image: nginx:latest
+    container_name: api_gateway
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./api_gateway/default.conf:/etc/nginx/conf.d/default.conf
+  
+    depends_on:
+      - account_service
+      - job_list_service
+      - message_service
+    networks:
+      - app-network   
+ 
+    
+
+  celery_worker:
+    build:
+      context: ./account_service/account_service
+    container_name: celery_worker
+    command: celery -A account_service worker --loglevel=info
+    volumes:
+      - ./account_service/account_service:/code
+    depends_on:
+      - redis
+      - db
+    env_file:
+      - ./account_service/account_service/.env
+    environment:
+      - DB_NAME=jobjourney_db
+      - DB_USER=postgres
+      - DB_PASSWORD=1729
+      - DB_HOST=db
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    networks:
+      - app-network 
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network     
+
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: jobjourney_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1729
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - app-network  
+
+volumes:
+  postgres_data:
+networks:
+  app-network:
+    driver: bridge
+
+

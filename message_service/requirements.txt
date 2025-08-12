@@ -1,0 +1,11 @@
+Django>=4.2
+djangorestframework
+psycopg2-binary
+gunicorn
+psycopg2-binary
+channels
+channels_redis
+daphne
+django-cors-headers
+requests
+Pillow
