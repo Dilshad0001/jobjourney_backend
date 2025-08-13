@@ -163,8 +163,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway', 'yourdomain.com']
 
-ALLOWED_HOSTS = ['*']  # TEMP for dev; make strict later
+# ALLOWED_HOSTS = ['*']  # TEMP for dev; make strict later
 
 # For proxy like Nginx
 USE_X_FORWARDED_HOST = True

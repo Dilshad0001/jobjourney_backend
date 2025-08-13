@@ -255,3 +255,5 @@ GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway']  
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway', 'yourdomain.com']
+
