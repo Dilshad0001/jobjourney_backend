@@ -37,6 +37,7 @@ services:
       - "8001:8001"
     depends_on:
       - db
+      - account_service
     env_file:
       - ./job_list_service/.env
     environment:

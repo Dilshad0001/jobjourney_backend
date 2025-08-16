@@ -27,7 +27,6 @@ SECRET_KEY = 'django-insecure-v6-xlx^phku!10u$(7p3s+hns5nsl8=wil2qs2ma%c=$9z#3(z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -164,7 +163,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway', 'yourdomain.com']
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway', 'yourdomain.com', '13.60.156.64']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway', 'yourdomain.com', '51.21.215.128']
 
 
 # ALLOWED_HOSTS = ['*']  # TEMP for dev; make strict later

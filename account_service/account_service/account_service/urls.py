@@ -3,6 +3,13 @@ from django.contrib import admin
 from django.urls import path,include
 from user_account.views import GitHubLoginAPIView
 
+from django.urls import path
+from django.http import JsonResponse
+
+def home(request):
+    return JsonResponse({"status": "Account service is running"})
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/',include('user_account.urls')),
@@ -26,4 +33,8 @@ urlpatterns = [
     # path('auth/social/login', include('allauth.socialaccount.urls'),name='social_login'),
     path("auth/github/", GitHubLoginAPIView.as_view()),
 
+]
+
+urlpatterns += [
+    path('', home),  # this is just http://service/
 ]

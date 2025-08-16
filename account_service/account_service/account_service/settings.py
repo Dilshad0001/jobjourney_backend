@@ -218,7 +218,6 @@ REST_USE_JWT = True
 
 
 
-ALLOWED_HOSTS = ['*']
 
 
 
@@ -253,7 +252,7 @@ GITHUB_CLIENT_ID =os.getenv('GITHUB_CLIENT_ID')
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 
 
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway']  
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','localhost', '127.0.0.1', 'api_gateway','51.21.215.128','account_service']
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway', 'yourdomain.com']
 

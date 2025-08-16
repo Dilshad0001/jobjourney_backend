@@ -171,10 +171,19 @@ class GitHubLoginAPIView(APIView):
 
 
 
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
+@method_decorator(csrf_exempt, name='dispatch')
 class selfUser(APIView):
     permission_classes=[IsAuthenticated] 
     def get(self,request):
+        print("===== DEBUG =======================")
+        print("request-user",request.user)
+        print("Request headers:", request.headers)
+        print("Authorization header:", request.headers.get("Authorization"))
+        print("=================")
+
         try:
             self=CustomUser.objects.get(id=request.user.id)
         except CustomUser.DoesNotExist:

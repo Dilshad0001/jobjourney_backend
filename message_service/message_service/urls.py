@@ -20,10 +20,17 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.http import JsonResponse
+from django.urls import path
+
+def home(request):
+    return JsonResponse({"status": "Message service is running"})
+
 
 
 
 urlpatterns = [
+    path('', home),
     path('admin/', admin.site.urls),
     path('chat/',include('chat.urls'))
 ]
