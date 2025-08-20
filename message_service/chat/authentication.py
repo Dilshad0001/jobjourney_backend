@@ -21,12 +21,12 @@ class CustomAuthentication(BaseAuthentication):
 
         try:
             res = requests.get(
-                "http://api_gateway/auth/api/auth/me/",
+                "http://51.21.215.128/auth/api/auth/me/",
                 headers={'Authorization': auth_header},
                 timeout=3
             )
             if res.status_code != 200:
-                raise AuthenticationFailed('Invalid tokensss')
+                raise AuthenticationFailed(f'Invalid tokensss, status={res.status_code}, token={auth_header}')
             user_data = res.json()
             actual_user_data = user_data.get('data')
 

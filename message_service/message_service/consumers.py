@@ -82,7 +82,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if token:
             try:
                 response = requests.get(
-                    'http://api_gateway/auth/api/auth/self-profile/',
+                    'http://51.21.215.128/auth/api/auth/self-profile/',
                     headers={'Authorization': f'Bearer {token}' }            )
                 data=response.json()
                 actual_data=data["data"]

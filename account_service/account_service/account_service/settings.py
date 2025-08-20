@@ -4,6 +4,10 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+import logging
+logger = logging.getLogger("django.security.DisallowedHost")
+logger.setLevel("DEBUG")
+logger.addHandler(logging.StreamHandler())
 
 
 
@@ -42,6 +46,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'rest_framework.authtoken',
+    'django_extensions',
 
 ]
 
@@ -200,14 +205,20 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 
 CORS_ALLOWED_ORIGINS = [
+    "https://jobjourney.ddns.net",
     "http://localhost:5173",
+    "https://main.d1kxgivemgitr8.amplifyapp.com",
+    "https://9b92a92e3201.ngrok-free.app",
 ]
 
 
 
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://jobjourney.ddns.net",
     "http://localhost:5173",
+    "https://main.d1kxgivemgitr8.amplifyapp.com",
+    "https://9b92a92e3201.ngrok-free.app",
 ]
 
 
@@ -252,7 +263,35 @@ GITHUB_CLIENT_ID =os.getenv('GITHUB_CLIENT_ID')
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['*','localhost', '127.0.0.1', 'api_gateway','51.21.215.128','account_service']
+#ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','localhost', '127.0.0.1', 'api_gateway','51.21.215.128','account_service','api.jobjourney.com','jobjourney.ddns.net']
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'api_gateway', 'yourdomain.com']
 
+
+
+
+# Allow credentials (cookies/auth headers)
+CORS_ALLOW_CREDENTIALS = True
+
+# Allow all headers for preflight requests
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+# Optional: allow all methods
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]

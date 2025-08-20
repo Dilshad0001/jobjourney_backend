@@ -31,58 +31,6 @@ class ChatHistoryView(APIView):
         # ✅ Fix:
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)
-        
-
-
-# class ContactListView(APIView):
-#     authentication_classes = [CustomAuthentication]
-#     permission_classes = [IsAuthenticated]  
-#     def get(self, request):
-
-#         auth_header = request.headers.get('Authorization')
-#         print('AUTH HEADER IN VIEWS=',auth_header)
-#         actual_data = None
-#         if auth_header:
-#             try:
-#                 response = requests.get(
-#                     'http://api_gateway/auth/api/auth/self-profile/',
-#                     headers={'Authorization': auth_header}         )
-#                 print("Internal API response status=========:", response.status_code)
-#                 print("Internal API response:==", response.json())
-#                 data=response.json()
-#                 actual_data=data["data"]
-#                 print('ACTUAL DATA IN VIEWS++',actual_data)
-
-#             except requests.exceptions.RequestException as e:
-#                 print("Error calling internal API:", e)
-
-#         else:
-#             print("⚠️ No Authorization token found in headers")   
-
-
-#         # contact_list = ChatContact.objects.filter(user_id=request.user.id).select_related("contact")
-#         print("USER ID IN CONTACT LIST  VIEW=2===",request.user.id)
-#         contact_list = ChatContact.objects.filter(user_id=actual_data.get('id'))
-#         ser = ChatContactserialser(contact_list, many=True)
-#         return Response({"message": "Contact list fetched successfully", "data": ser.data}, status=status.HTTP_200_OK)
-  
-#     # def get(self,request):
-#     #     contact_list=ChatContact.objects.filter(user_id=request.user.id)
-#     #     ser=ChatContactserialser(contact_list,many=True)
-#     #     return Response({"message":"contact list fetched successfully","data":ser.data},status=status.HTTP_200_OK)
-#     def post (self,request):
-#         new_contact=request.data.copy()
-#         print("NEW CONTACT= ==",new_contact)
-#         if not new_contact.get('contact_id'):
-#             return Response({"error": "contact_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-#         print("user id IN CONTACT LIST VIEW==",request.user.id)
-#         new_contact['user_id']=request.user.id
-#         ser=ChatContactserialser(data=new_contact)
-#         if ser.is_valid():
-#             ser.save()
-#             return Response({"message":"new chat contact added successfully","data":ser.data},status=status.HTTP_201_CREATED)
-#         return Response({"message":"chat contact add failed","error":ser.errors},status=status.HTTP_400_BAD_REQUEST)
-
 
 
 
@@ -96,7 +44,8 @@ class ContactListView(APIView):
         if auth_header:
             try:
                 response = requests.get(
-                    'http://api_gateway/auth/api/auth/self-profile/',
+                    "http://51.21.215.128/auth/api/auth/self-profile/",
+#                    'http://51.21.215.128/auth/api/auth/self-profile/',
                     headers={'Authorization': auth_header}
                 )
                 if response.status_code == 200:
@@ -132,7 +81,7 @@ class ContactListView(APIView):
         print('RECIVER ID  IN CONTACT LIST VIEW==',reciver_id)
         try:
             response = requests.get(
-                f"http://api_gateway/auth/user/profile/?profileId={reciver_id}",
+                f"http://51.21.215.128/auth/user/profile/?profileId={reciver_id}",
                 headers={'Authorization': autHeader}
             )
             print('STATUS IN CONTACT LIST VIEW=',response.status_code)
@@ -167,3 +116,22 @@ class ContactListView(APIView):
             return Response({"message": "Invalid data", "error": ser.errors},status=status.HTTP_400_BAD_REQUEST)    
             
 
+    def delete(self, request):
+        actual_data = self.get_authenticated_user_data(request)
+        if not actual_data:
+            return Response({"error": "Unable to authenticate user"}, status=401)
+
+        user_id = actual_data.get('id')
+        contact_id = request.data.get('contact_id') or request.GET.get('contact_id')
+
+        if not contact_id:
+            return Response({"error": "contact_id is required"}, status=400)
+
+        try:
+            chat_contact = ChatContact.objects.get(user_id=user_id, contact_id=contact_id)
+            chat_history=Message.objects.filter(sender_id=user_id, receiver_id=contact_id)
+            chat_contact.delete()
+            chat_history.delete()
+            return Response({"message": "Chat contact deleted successfully"}, status=status.HTTP_200_OK)
+        except ChatContact.DoesNotExist:
+            return Response({"error": "Chat contact not found"}, status=status.HTTP_404_NOT_FOUND)
